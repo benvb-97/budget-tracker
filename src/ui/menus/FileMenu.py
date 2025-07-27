@@ -1,10 +1,13 @@
 
-from PySide6.QtWidgets import QMenu, QDialog
+from PySide6.QtWidgets import QMenu, QDialog, QFileDialog
 from PySide6.QtGui import QAction
 from typing import TYPE_CHECKING
 
 from src.data.settings.AppSettings import AppSettings
+from src.models.Projects import ProjectsModel
+from src.ui.file.NewProjectDialog import NewProjectDialog
 from src.ui.settings.SettingsDialog import SettingsDialog
+import os
 
 if TYPE_CHECKING:
     from src.ui.MainWindow import MainWindow
@@ -12,17 +15,17 @@ if TYPE_CHECKING:
 
 class FileMenu(QMenu):
 
-
-    def __init__(self, settings: AppSettings, parent: "MainWindow") -> None:
+    def __init__(self, projects_model: ProjectsModel, settings: AppSettings, parent: "MainWindow") -> None:
         super().__init__(title="File", parent=parent)
 
+        self._projects_model = projects_model
         self._settings = settings
         self._main_window = parent
 
         # New Project Action
         new_project_action = QAction("New Project", self)
         new_project_action.setStatusTip("Create a new project")
-        new_project_action.triggered.connect(self._create_new_project)
+        new_project_action.triggered.connect(self._open_new_project_dialog)
         self.addAction(new_project_action)
 
         # Open Project Action
@@ -43,13 +46,13 @@ class FileMenu(QMenu):
         # Save As Action
         save_as_action = QAction("Save As", self)
         save_as_action.setStatusTip("Saves the active project with a new directory name")
-        save_as_action.triggered.connect(self._save_as)
+        save_as_action.triggered.connect(self._save_current_project_as)
         self.addAction(save_as_action)
 
         # Save All Action
         save_all_action = QAction("Save All", self)
         save_all_action.setStatusTip("Saves all opened projects")
-        save_all_action.triggered.connect(self._save_all)
+        save_all_action.triggered.connect(self._save_all_projects)
         self.addAction(save_all_action)
 
         # Add separator
@@ -86,26 +89,35 @@ class FileMenu(QMenu):
 
         self.addAction(quit_action)
 
-    def _create_new_project(self):
-        pass
+    def _open_new_project_dialog(self) -> None:
+        new_project_dialog = NewProjectDialog(projects_model=self._projects_model, parent=self)
+        new_project_dialog.exec()
 
     def _open_project(self):
-        pass
+        directory_path = str(
+            QFileDialog.getExistingDirectory(self, "Select Project Directory")
+        )
+
+        if os.path.isdir(directory_path):
+            self._projects_model.open_project(project_directory=directory_path)
 
     def _save_current_project(self):
-        pass
+        self._projects_model.save_current_project()
 
-    def _save_as(self):
-        pass
+    def _save_current_project_as(self):
+        new_project_directory = str(
+            QFileDialog.getExistingDirectory(self, "Select Project Directory")
+        )
+        self._projects_model.save_current_project_as(new_project_dir=new_project_directory)
 
-    def _save_all(self):
-        pass
+    def _save_all_projects(self):
+        self._projects_model.save_all_projects()
 
-    def _close_current_project(self):
-        pass
+    def _close_current_project(self) -> None:
+        self._projects_model.close_current_project()
 
-    def _close_all_projects(self):
-        pass
+    def _close_all_projects(self) -> None:
+        self._projects_model.close_all_projects()
 
     def open_settings_dialog(self) -> None:
         dialog = SettingsDialog(self, settings=self._settings)

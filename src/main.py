@@ -9,8 +9,9 @@ from PySide6.QtWidgets import QApplication
 
 from src.data.settings.AppSettings import AppSettings
 from src.data.settings.GeneralSettings import GeneralSettingKeys
+from src.models.Projects import ProjectsModel
 from src.utils.logging_config import setup_logging
-import os
+from src.data.Projects import Projects
 from src.ui.MainWindow import MainWindow
 
 
@@ -27,10 +28,20 @@ class MainBackend(QObject):
 
         self._application = application
         self._settings = settings
+        self._init_models()
 
         # Init main window
-        self._main_window = MainWindow(settings=self._settings)
+        self._main_window = MainWindow(projects_model=self._projects_model, settings=self._settings)
         self._main_window.show()
+
+    def _init_models(self) -> None:
+        """
+        Initializes the overarching data structures
+        - projects stores all project related data per project
+        :return:
+        """
+        self.projects = Projects(settings=self._settings)
+        self._projects_model = ProjectsModel(projects=self.projects)
 
 
 def main() -> None:

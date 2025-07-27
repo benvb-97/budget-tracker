@@ -1,13 +1,17 @@
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QMenuBar
+from PySide6.QtWidgets import QMainWindow, QMenuBar, QSplitter
 
 from src.data.settings.AppSettings import AppSettings
-from src.ui.MainMenus import FileMenu
+from src.models.Projects import ProjectsModel
+from src.ui.menus.FileMenu import FileMenu
+from src.ui.SideBar import SideBar
+from src.ui.WelcomePage import WelcomePage
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, settings: AppSettings) -> None:
+    def __init__(self, projects_model: ProjectsModel, settings: AppSettings) -> None:
         super(MainWindow, self).__init__()
 
+        self._projects_model = projects_model
         self._settings = settings
 
         self._setup_ui()
@@ -22,17 +26,20 @@ class MainWindow(QMainWindow):
 
     def _create_central_widget(self):
         """Creates a placeholder widget for the main window."""
-        central_widget = QWidget()
-        self.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-        label = QLabel("Welcome to the Main Window!")
-        label.setStyleSheet("font-size: 24px; text-align: center;")
-        layout.addWidget(label)
-        layout.addStretch()
+
+        self._main_splitter = QSplitter(self)
+        self.setCentralWidget(self._main_splitter)
+
+        self._projects_view = SideBar(projects_model=self._projects_model, parent=self)
+
+        welcome_page = WelcomePage(self)
+
+        self._main_splitter.addWidget(self._projects_view)
+        self._main_splitter.addWidget(welcome_page)
 
     def _create_menu_bar(self):
         """Creates the menu bar and adds menus."""
         self._menu_bar = QMenuBar(self)
         self.setMenuBar(self._menu_bar)
 
-        self._menu_bar.addMenu(FileMenu(settings=self._settings, parent=self))
+        self._menu_bar.addMenu(FileMenu(projects_model=self._projects_model, settings=self._settings, parent=self))

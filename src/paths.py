@@ -9,9 +9,8 @@ ROOT_DIR = _this_file_dir.parent
 # Define other important paths relative to the root
 LOGS_DIR = ROOT_DIR / "logs"
 RESOURCES_DIR = ROOT_DIR / "resources"
-ICONS_DIR = ROOT_DIR / "icons"
+ICONS_DIR = RESOURCES_DIR / "icons"
 APP_SETTINGS_FILEPATH = ROOT_DIR / "settings.json"
 
 class IconPaths:
-
     FOLDER = ICONS_DIR / "folder"
