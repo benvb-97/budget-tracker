@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QMenuBa
 
 from src.data.settings.AppSettings import AppSettings
 from src.ui.MainMenus import FileMenu
-from src.ui.settings.SettingsDialog import SettingsDialog
 
 
 class MainWindow(QMainWindow):
@@ -36,8 +35,4 @@ class MainWindow(QMainWindow):
         self._menu_bar = QMenuBar(self)
         self.setMenuBar(self._menu_bar)
 
-        self._menu_bar.addMenu(FileMenu(self))
-
-    def open_settings_dialog(self) -> None:
-        dialog = SettingsDialog(self, settings=self._settings)
-        dialog.exec()
+        self._menu_bar.addMenu(FileMenu(settings=self._settings, parent=self))
