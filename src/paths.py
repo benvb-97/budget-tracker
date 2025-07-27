@@ -1,0 +1,10 @@
+from pathlib import Path
+
+# Get the directory where this file (paths.py) is located
+_this_file_dir = Path(__file__).resolve().parent
+
+# Get the root directory, which is 1 level up
+ROOT_DIR = _this_file_dir.parent
+
+# Define other important paths relative to the root
+LOGS_DIR = ROOT_DIR / "logs"
