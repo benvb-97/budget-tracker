@@ -20,13 +20,13 @@ class FileMenu(QMenu):
         self._main_window = parent
 
         # New Project Action
-        new_project_action = QAction("New Project")
+        new_project_action = QAction("New Project", self)
         new_project_action.setStatusTip("Create a new project")
         new_project_action.triggered.connect(self._create_new_project)
         self.addAction(new_project_action)
 
         # Open Project Action
-        open_project_action = QAction("Open Project")
+        open_project_action = QAction("Open Project", self)
         open_project_action.setStatusTip("Open an existing project")
         open_project_action.triggered.connect(self._open_project)
         self.addAction(open_project_action)
@@ -35,19 +35,19 @@ class FileMenu(QMenu):
         self.addSeparator()
 
         # Save Current Project Action
-        save_current_project_action = QAction("Save Current Project")
+        save_current_project_action = QAction("Save Current Project", self)
         save_current_project_action.setStatusTip("Saves the active project")
         save_current_project_action.triggered.connect(self._save_current_project)
         self.addAction(save_current_project_action)
 
         # Save As Action
-        save_as_action = QAction("Save As")
+        save_as_action = QAction("Save As", self)
         save_as_action.setStatusTip("Saves the active project with a new directory name")
         save_as_action.triggered.connect(self._save_as)
         self.addAction(save_as_action)
 
         # Save All Action
-        save_all_action = QAction("Save All")
+        save_all_action = QAction("Save All", self)
         save_all_action.setStatusTip("Saves all opened projects")
         save_all_action.triggered.connect(self._save_all)
         self.addAction(save_all_action)
@@ -56,13 +56,13 @@ class FileMenu(QMenu):
         self.addSeparator()
 
         # Close Current Project Action
-        close_current_project_action = QAction("Close Current Project")
+        close_current_project_action = QAction("Close Current Project", self)
         close_current_project_action.setStatusTip("Closes the active project without saving")
         close_current_project_action.triggered.connect(self._close_current_project)
         self.addAction(close_current_project_action)
 
         # Close All Projects Action
-        close_all_projects_action = QAction("Close All Projects")
+        close_all_projects_action = QAction("Close All Projects", self)
         close_all_projects_action.setStatusTip("Closes all opened projects without saving")
         close_all_projects_action.triggered.connect(self._close_all_projects)
         self.addAction(close_all_projects_action)
