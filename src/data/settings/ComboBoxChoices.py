@@ -1,5 +1,7 @@
 from enum import StrEnum
 
+from src.data.Currencies import Currencies
+
 
 class DebugLevels(StrEnum):
     DEBUG = "DEBUG"
@@ -28,4 +30,9 @@ application_styles = {
     ApplicationStyles.WINDOWS: "Windows",
     ApplicationStyles.FUSION: "Fusion",
     ApplicationStyles.GTKPLUS: "GTK+",
+}
+
+
+currencies = {
+    currency: currency for currency in Currencies
 }

@@ -10,6 +10,7 @@ from src.ui.menus.FileMenu import FileMenu
 from src.ui.SideBar import SideBar
 from src.ui.WelcomePage import WelcomePage
 from src.ui.menus.IncomeMenu import IncomeMenu
+from src.ui.menus.MainMenuBar import MainMenuBar
 
 
 class MainWindow(QMainWindow):
@@ -44,12 +45,8 @@ class MainWindow(QMainWindow):
 
     def _create_menu_bar(self):
         """Creates the menu bar and adds menus."""
-        self._menu_bar = QMenuBar(self)
+        self._menu_bar = MainMenuBar(projects_model=self._projects_model, settings=self._settings, parent=self)
         self.setMenuBar(self._menu_bar)
-
-        self._menu_bar.addMenu(FileMenu(projects_model=self._projects_model, settings=self._settings, parent=self))
-        self._menu_bar.addMenu(IncomeMenu(projects_model=self._projects_model, settings=self._settings, parent=self))
-        self._menu_bar.addMenu(ExpensesMenu(projects_model=self._projects_model, settings=self._settings, parent=self))
 
     def _remove_current_tool_bar(self):
         if self._tool_bar is not None:

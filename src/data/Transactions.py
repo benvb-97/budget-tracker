@@ -8,7 +8,7 @@ from src.data.Currencies import Currencies
 if TYPE_CHECKING:
     from src.data.Projects import Project
 from src.data.TaggedItems import TaggedItems, TaggedItem
-from src.data.TransactionCategory import TransactionCategory
+from src.data.TransactionCategories import TransactionCategory
 
 
 class Transaction(TaggedItem):

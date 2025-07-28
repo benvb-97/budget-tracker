@@ -1,6 +1,7 @@
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
+from src.data.Currencies import Currencies
 from src.data.settings.SettingsGroups import SettingGroups, SettingsGroup, SettingsSubGroup
 from src.data.settings.SettingTypes import BoolSetting, ComboBoxSetting, IntSetting
 
@@ -11,7 +12,7 @@ from src.data.settings.ComboBoxChoices import (
     ApplicationStyles,
     DebugLevels,
     application_styles,
-    debug_levels,
+    debug_levels, currencies,
 )
 
 
@@ -61,6 +62,12 @@ class StyleSettings(SettingsSubGroup):
                 choices=application_styles,
                 default=ApplicationStyles.FUSION,
             ),
+            ComboBoxSetting(
+                key=GeneralSettingKeys.CURRENCY,
+                text="Currency",
+                choices=currencies,
+                default=Currencies.EUR,
+            )
         ]
         self._settings = {setting.key: setting for setting in settings}
 
@@ -68,3 +75,4 @@ class StyleSettings(SettingsSubGroup):
 class GeneralSettingKeys(StrEnum):
     DEBUG_LEVEL = "debug_level"
     APPLICATION_STYLE = "application_style"
+    CURRENCY="currency"

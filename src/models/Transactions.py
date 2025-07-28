@@ -1,6 +1,9 @@
 from typing import Optional, TYPE_CHECKING, Any
 
 from src.data.Currencies import Currencies
+from src.data.TaggedItems import TaggedItemsType
+from src.data.settings.AppSettings import AppSettings
+from src.data.settings.GeneralSettings import GeneralSettingKeys
 from src.models.TaggedItems import TaggedItemsOverviewTableModel
 
 if TYPE_CHECKING:
@@ -16,40 +19,32 @@ class Columns(IntEnum):
     IDENTIFIER = 0
     DATE = 1
     AMOUNT = 2
-    CURRENCY = 3
-    COUNTERPART = 4
-    CATEGORY = 5
-    ACCOUNT = 6
-    NOTE = 7
+    COUNTERPART = 3
+    CATEGORY = 4
+    ACCOUNT = 5
+    NOTE = 6
 
 
-class TransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
+class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
     cols = Columns
-    comboBox_columns = (Columns.CURRENCY,
-                        Columns.COUNTERPART,
+    comboBox_columns = (Columns.COUNTERPART,
                         Columns.CATEGORY,
                         Columns.ACCOUNT,)
 
     comboBoxOptionsRole = Qt.ItemDataRole.UserRole
 
-    def __init__(self, projects_model: "ProjectsModel", parent = None) -> None:
+    def __init__(self,
+                 projects_model: "ProjectsModel",
+                 settings: AppSettings,
+                 parent,
+                 ) -> None:
         super().__init__(projects_model=projects_model,
+                         settings=settings,
+                         parent=parent,
                          )
 
-    def _set_current_project_data(self, project: Optional["Project"]):
-        """Set new data based on current project"""
-        self.beginResetModel()
-        if project:
-            self._data = project.income_transactions
-            self._row_to_id_mapper = {}  # type: dict[int, int]
-            row = 0
-            for item in self._data.values():
-                self._row_to_id_mapper[row] = item.identifier
-                row += 1
-        else:
-            self._data = None  # Use None to reset the view
-            self._row_to_id_mapper = {}  # type: dict[int, int]
-        self.endResetModel()
+    def _get_project_data(self, project: "Project") -> TaggedItemsType:
+        return project.income_transactions
 
     def data(self, index=QModelIndex(), role=Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid():
@@ -65,8 +60,6 @@ class TransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
                 return f"{transaction.date}"
             elif column == self.cols.AMOUNT:
                 return f"{transaction.amount}"
-            elif column == self.cols.CURRENCY:
-                return f"{transaction.currency}"
             elif column == self.cols.COUNTERPART:
                 return f"{transaction.counterpart}"
             elif column == self.cols.CATEGORY:
@@ -79,9 +72,6 @@ class TransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
                 raise NotImplementedError(f"DisplayRole for column {column} is not implemented."
                                           f"Accepted columns: {self.cols}")
         elif role == self.comboBoxOptionsRole:
-            if column == self.cols.CURRENCY:
-                return {currency.name: currency.value for currency in Currencies}
-            else:
                 return {}
 
         return None
@@ -106,9 +96,8 @@ class TransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
             elif section == self.cols.DATE:
                 return "Date"
             elif section == self.cols.AMOUNT:
-                return f"Amount"
-            elif section == self.cols.CURRENCY:
-                return f"Currency"
+                currency_symbol = Currencies[self._settings.general[GeneralSettingKeys.CURRENCY].value].symbol
+                return f"Amount [{currency_symbol}]"
             elif section == self.cols.COUNTERPART:
                 return f"Counterpart"
             elif section == self.cols.CATEGORY:
