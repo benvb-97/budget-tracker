@@ -4,6 +4,8 @@ from os.path import isdir
 from typing import Any, ItemsView, KeysView, ValuesView
 
 from PySide6.QtCore import QObject
+
+from src.data.Transactions import IncomeTransactions, ExpenseTransactions, Transaction
 from src.data.settings.AppSettings import AppSettings
 
 
@@ -26,12 +28,18 @@ class Project(QObject):
         self.project_dir = project_directory
         self.settings = settings
 
+        self.income_transactions = IncomeTransactions(project=self, settings=self.settings, factory=Transaction)
+        self.expense_transactions = ExpenseTransactions(project=self, settings=self.settings, factory=Transaction)
+
         if load_from_dir:
             self._load_project()
 
     def _load_json(self, json_dict: dict[str, dict]) -> None:
         """Load project data from a specified json dictionary"""
-        pass
+        if "income_transactions" in json_dict:
+            self.income_transactions.load_from_json(json_dict["income_transactions"])
+        if "expense_transactions" in json_dict:
+            self.expense_transactions.load_from_json(json_dict["expense_transactions"])
 
     @property
     def folder_name(self) -> str:
@@ -58,7 +66,17 @@ class Project(QObject):
             json.dump(self.json_dict(), write_file, indent=4)
 
     def json_dict(self) -> dict[str, dict]:
-        pass
+        key_to_items_mapper = {
+            "income_transactions": self.income_transactions,
+            "expense_transactions": self.expense_transactions,
+        }
+
+        json_dict = {}  # type: dict[str, dict[int, Any]]
+
+        for key, items in key_to_items_mapper.items():
+            if items:
+                json_dict[key] = items.json_dict()
+        return json_dict
 
 
 class Projects:

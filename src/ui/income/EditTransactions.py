@@ -17,6 +17,8 @@ from PySide6.QtWidgets import (
 
 from src.data.settings.AppSettings import AppSettings
 from src.models.Projects import ProjectsModel
+from src.models.Transactions import TransactionsOverviewTableModel
+from src.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
 
 
 class EditTransactionsToolBar(QToolBar):
@@ -75,6 +77,9 @@ class EditTransactionsPage(QWidget):
         self._view.setAlternatingRowColors(True)
         self._view.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
 
+        for column in TransactionsOverviewTableModel.comboBox_columns:
+            self._view.setItemDelegateForColumn(column, ComboBoxDelegate(self._view))
+
         self._header_view = QHeaderView(Qt.Orientation.Horizontal, self._view)
         self._header_view.setDefaultAlignment(Qt.AlignmentFlag.AlignCenter)
         self._header_view.setStretchLastSection(True)
@@ -83,7 +88,10 @@ class EditTransactionsPage(QWidget):
         self._layout.addWidget(self._view)
 
     def _set_models(self) -> None:
-        pass
+        transactions_model = TransactionsOverviewTableModel(projects_model=self._projects_model)
+
+        self._view.setModel(transactions_model)
+        self._header_view.setModel(transactions_model)
 
     def _setup_connections(self) -> None:
         pass
