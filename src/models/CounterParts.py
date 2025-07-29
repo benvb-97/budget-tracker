@@ -11,7 +11,7 @@ from src.models.TaggedItems import TaggedItemsOverviewTableModel, TaggedItemsLis
 if TYPE_CHECKING:
     from src.data.Projects import Project
     from src.models.Projects import ProjectsModel
-from src.data.Transactions import Transactions, IncomeTransaction
+from src.data.Transactions import Transactions, Transaction
 from PySide6.QtCore import QAbstractListModel, Qt, QModelIndex, QAbstractTableModel
 from enum import IntEnum
 from src.data.CounterParts import CounterPart

@@ -7,8 +7,8 @@ import os
 from src.data.settings.AppSettings import AppSettings
 from src.models.BankAccounts import BankAccountsOverviewListModel
 from src.models.CounterParts import CounterPartsOverviewListModel
-from src.models.TransactionCategories import IncomeCategoriesOverviewModel
-from src.models.Transactions import IncomeTransactionsOverviewTableModel
+from src.models.TransactionCategories import TransactionCategoriesOverviewModel
+from src.models.Transactions import TransactionsOverviewTableModel
 
 if TYPE_CHECKING:
     from src.data.Projects import Project, Projects
@@ -44,14 +44,14 @@ class ProjectsModel(QAbstractListModel):
                                                                 parent=self,
                                                                 )
 
-        self.income_categories_model = IncomeCategoriesOverviewModel(projects_model=self,
-                                                               settings=self._settings,
-                                                               parent=self,
-                                                               )
-        self.income_transactions_model = IncomeTransactionsOverviewTableModel(projects_model=self,
-                                                                  settings=self._settings,
-                                                                  parent=self,
-                                                                  )
+        self.transaction_categories_model = TransactionCategoriesOverviewModel(projects_model=self,
+                                                                               settings=self._settings,
+                                                                               parent=self,
+                                                                               )
+        self.transactions_model = TransactionsOverviewTableModel(projects_model=self,
+                                                                 settings=self._settings,
+                                                                 parent=self,
+                                                                 )
 
     def rowCount(self, parent=QModelIndex()) -> int:
         return self._projects.n_projects

@@ -18,11 +18,11 @@ from PySide6.QtWidgets import (
 
 from src.data.settings.AppSettings import AppSettings
 from src.models.Projects import ProjectsModel
-from src.models.Transactions import IncomeTransactionsOverviewTableModel
+from src.models.Transactions import TransactionsOverviewTableModel
 from src.ui.ManageBankAccounts import ManageBankAccountsDialog
 from src.ui.ManageCounterParts import ManageCounterPartsDialog
 from src.ui.delegates.DateDelegate import DateDelegate
-from src.ui.income.ManageCategories import CategoriesDialog
+from src.ui.transactions.ManageCategories import CategoriesDialog
 
 if TYPE_CHECKING:
     from src.ui.MainWindow import MainWindow
@@ -39,14 +39,14 @@ class EditTransactionsToolBar(QToolBar):
 
         self._main_window = parent
         self._projects_model = projects_model
-        self._transactions_model = self._projects_model.income_transactions_model  # type: IncomeTransactionsOverviewTableModel
+        self._transactions_model = self._projects_model.transactions_model  # type: TransactionsOverviewTableModel
         self._settings = settings
 
         self.setMovable(True)
 
         # Add Transaction Action
         add_transaction_action = QAction("Add Transaction", self)
-        add_transaction_action.setStatusTip("Adds a new 'income' transaction")
+        add_transaction_action.setStatusTip("Adds a new 'transactions' transaction")
         add_transaction_action.triggered.connect(self._add_transaction)
         self.addAction(add_transaction_action)
 
@@ -65,7 +65,7 @@ class EditTransactionsToolBar(QToolBar):
         manage_accounts_action.triggered.connect(self._open_manage_bank_accounts_dialog)
         self.addAction(manage_accounts_action)
 
-    def set_transactions_model(self, transactions_model: IncomeTransactionsOverviewTableModel) -> None:
+    def set_transactions_model(self, transactions_model: TransactionsOverviewTableModel) -> None:
         self._transactions_model = transactions_model
 
     def _add_transaction(self) -> None:
@@ -144,8 +144,8 @@ class EditTransactionsPage(QWidget):
         self._view.setAlternatingRowColors(True)
         self._view.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
 
-        self._view.setItemDelegateForColumn(IncomeTransactionsOverviewTableModel.cols.DATE, DateDelegate(settings=self._settings, parent=self._view))
-        for column in IncomeTransactionsOverviewTableModel.comboBox_columns:
+        self._view.setItemDelegateForColumn(TransactionsOverviewTableModel.cols.DATE, DateDelegate(settings=self._settings, parent=self._view))
+        for column in TransactionsOverviewTableModel.comboBox_columns:
             self._view.setItemDelegateForColumn(column, ComboBoxDelegate(self._view))
 
         self._header_view = QHeaderView(Qt.Orientation.Horizontal, self._view)
@@ -156,7 +156,7 @@ class EditTransactionsPage(QWidget):
         self._layout.addWidget(self._view)
 
     def _set_models(self) -> None:
-        transactions_model = self._projects_model.income_transactions_model
+        transactions_model = self._projects_model.transactions_model
 
         self._view.setModel(transactions_model)
         self._header_view.setModel(transactions_model)

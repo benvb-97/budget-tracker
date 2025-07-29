@@ -17,7 +17,7 @@ from src.data.settings.AppSettings import AppSettings
 
 if TYPE_CHECKING:
     from src.models.Projects import ProjectsModel
-from src.models.TransactionCategories import IncomeCategoriesOverviewModel
+from src.models.TransactionCategories import TransactionCategoriesOverviewModel
 
 
 class CategoriesTableView(QTableView):
@@ -33,7 +33,7 @@ class CategoriesTableView(QTableView):
         index = self.indexAt(position)  # type: QModelIndex
 
         if index.isValid():
-            model: IncomeCategoriesOverviewModel = index.model()
+            model: TransactionCategoriesOverviewModel = index.model()
 
             menu = QMenu(self)
 
@@ -89,7 +89,7 @@ class CategoriesDialog(QDialog):
 
 
     def _set_models(self) -> None:
-        self._categories_model = self._projects_model.income_categories_model
+        self._categories_model = self._projects_model.transaction_categories_model
 
         self._categories_list_selection_model = QItemSelectionModel(self._categories_model)
 

@@ -10,7 +10,7 @@ from src.models.TaggedItems import TaggedItemsOverviewTableModel, TaggedItemsLis
 if TYPE_CHECKING:
     from src.data.Projects import Project
     from src.models.Projects import ProjectsModel
-from src.data.Transactions import Transactions, IncomeTransaction
+from src.data.Transactions import Transactions, Transaction
 from PySide6.QtCore import QAbstractListModel, Qt, QModelIndex
 from enum import IntEnum
 
@@ -19,7 +19,7 @@ class Columns(IntEnum):
     NOTE = 1
 
 
-class IncomeCategoriesOverviewModel(TaggedItemsOverviewTableModel):
+class TransactionCategoriesOverviewModel(TaggedItemsOverviewTableModel):
     cols = Columns
 
     def __init__(self,
@@ -33,7 +33,7 @@ class IncomeCategoriesOverviewModel(TaggedItemsOverviewTableModel):
                          )
 
     def _get_project_data(self, project: "Project") -> TaggedItemsType:
-        return project.income_categories
+        return project.transaction_categories
 
     def data(self, index=QModelIndex(), role=Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid():

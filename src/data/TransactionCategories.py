@@ -38,9 +38,5 @@ class TransactionCategory(TaggedItem):
                             note=json_dict["note"],
                             )
 
-class IncomeCategories(TaggedItems[TransactionCategory]):
-    pass
-
-
-class ExpenseCategories(TaggedItems[TransactionCategory]):
+class TransactionCategories(TaggedItems[TransactionCategory]):
     pass

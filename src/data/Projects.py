@@ -7,8 +7,8 @@ from PySide6.QtCore import QObject
 
 from src.data.BankAccount import BankAccounts, BankAccount
 from src.data.CounterParts import CounterPart, CounterParts
-from src.data.TransactionCategories import IncomeCategories, TransactionCategory, ExpenseCategories
-from src.data.Transactions import IncomeTransactions, ExpenseTransactions, IncomeTransaction, ExpenseTransaction
+from src.data.TransactionCategories import TransactionCategories, TransactionCategory
+from src.data.Transactions import Transactions, Transaction
 from src.data.settings.AppSettings import AppSettings
 
 
@@ -31,22 +31,18 @@ class Project(QObject):
         self.project_dir = project_directory
         self.settings = settings
 
-        self.income_transactions = IncomeTransactions(project=self, settings=self.settings, factory=IncomeTransaction)
-        self.expense_transactions = ExpenseTransactions(project=self, settings=self.settings, factory=ExpenseTransaction)
-        self.income_categories = IncomeCategories(project=self, settings=self.settings, factory=TransactionCategory)
-        self.expense_categories = ExpenseCategories(project=self, settings=self.settings, factory=TransactionCategory)
+        self.transactions = Transactions(project=self, settings=self.settings, factory=Transaction)
+        self.transaction_categories = TransactionCategories(project=self, settings=self.settings, factory=TransactionCategory)
         self.bank_accounts = BankAccounts(project=self, settings=self.settings, factory=BankAccount)
         self.counterparts = CounterParts(project=self, settings=self.settings, factory=CounterPart)
 
         self._data_map = {
-            "income_categories": self.income_categories,
-            "expense_categories": self.expense_categories,
+            "transaction_categories": self.transaction_categories,
             "bank_accounts": self.bank_accounts,
             "counterparts": self.counterparts,
             # Put transactions AFTER categories/bank accounts/counterparts.
             # Loading a project JSON requires these to be instantiated before instantiating transactions.
-            "income_transactions": self.income_transactions,
-            "expense_transactions": self.expense_transactions,
+            "transactions": self.transactions,
         }
 
         if load_from_dir:

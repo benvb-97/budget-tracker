@@ -10,7 +10,7 @@ from src.utils.input_processing import convert_string_to_amount
 if TYPE_CHECKING:
     from src.data.Projects import Project
     from src.models.Projects import ProjectsModel
-from src.data.Transactions import Transactions, IncomeTransaction
+from src.data.Transactions import Transactions, Transaction
 from PySide6.QtCore import QAbstractTableModel, Qt, QModelIndex, QDate
 from enum import IntEnum
 import datetime
@@ -27,7 +27,7 @@ class Columns(IntEnum):
     NOTE = 6
 
 
-class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
+class TransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
     cols = Columns
     comboBox_columns = (Columns.COUNTERPART,
                         Columns.CATEGORY,
@@ -48,8 +48,8 @@ class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
     def _setup_connections(self):
         super()._setup_connections()
 
-        # Pass income categories model updates to relevant comboBox
-        self._projects_model.income_categories_model.dataChanged.connect(
+        # Pass categories model updates to relevant comboBox
+        self._projects_model.transaction_categories_model.dataChanged.connect(
             lambda: self._update_comboBox_delegates(self.cols.CATEGORY)
         )
         # Pass bank accounts model updates to relevant comboBox
@@ -62,14 +62,14 @@ class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
         )
 
     def _get_project_data(self, project: "Project") -> TaggedItemsType:
-        return project.income_transactions
+        return project.transactions
 
     def data(self, index=QModelIndex(), role=Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid():
             return None
 
         column = index.column()
-        transaction = self.get_item(index)  # type: IncomeTransaction
+        transaction = self.get_item(index)  # type: Transaction
 
         if role == Qt.ItemDataRole.DisplayRole:
             if column == self.cols.IDENTIFIER:
@@ -110,7 +110,7 @@ class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
                 accounts = self._projects_model.current_project.bank_accounts
                 return {identifier: account.name for identifier, account in accounts.items()}
             elif column == self.cols.CATEGORY:
-                categories = self._projects_model.current_project.income_categories
+                categories = self._projects_model.current_project.transaction_categories
                 return {identifier: category.name for identifier, category in categories.items()}
             elif column == self.cols.COUNTERPART:
                 counterparts = self._projects_model.current_project.counterparts
@@ -126,7 +126,7 @@ class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
             return False
 
         column = index.column()
-        transaction = self.get_item(index)  # type: IncomeTransaction
+        transaction = self.get_item(index)  # type: Transaction
 
         if role == Qt.ItemDataRole.EditRole:
             if column == self.cols.DATE:
@@ -165,7 +165,7 @@ class IncomeTransactionsOverviewTableModel(TaggedItemsOverviewTableModel):
                     self.dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole | Qt.ItemDataRole.EditRole)
                     return True
 
-                categories = self._projects_model.current_project.income_categories
+                categories = self._projects_model.current_project.transaction_categories
                 if identifier in categories:
                     transaction.category = categories[identifier]
                     self.dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole | Qt.ItemDataRole.EditRole)

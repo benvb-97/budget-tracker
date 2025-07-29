@@ -5,16 +5,16 @@ from typing import TYPE_CHECKING
 
 from src.data.settings.AppSettings import AppSettings
 from src.models.Projects import ProjectsModel
-from src.ui.income.EditTransactions import EditTransactionsToolBar, EditTransactionsPage
+from src.ui.transactions.EditTransactions import EditTransactionsToolBar, EditTransactionsPage
 
 if TYPE_CHECKING:
     from src.ui.MainWindow import MainWindow
 
 
-class IncomeMenu(QMenu):
+class TransactionsMenu(QMenu):
 
     def __init__(self, projects_model: ProjectsModel, settings: AppSettings, parent: "MainWindow") -> None:
-        super().__init__(title="Income", parent=parent)
+        super().__init__(title="Transactions", parent=parent)
 
         self._projects_model = projects_model
         self._settings = settings
@@ -22,7 +22,6 @@ class IncomeMenu(QMenu):
 
         # Edit Income Data Action
         edit_transactions_action = QAction("Edit Transactions", self)
-        edit_transactions_action.setStatusTip("Edit income transactions")
         edit_transactions_action.triggered.connect(self._navigate_to_edit_transactions_page)
         self.addAction(edit_transactions_action)
 

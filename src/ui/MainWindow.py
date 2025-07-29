@@ -5,11 +5,8 @@ from PySide6.QtWidgets import QMainWindow, QMenuBar, QSplitter, QToolBar, QWidge
 
 from src.data.settings.AppSettings import AppSettings
 from src.models.Projects import ProjectsModel
-from src.ui.menus.ExpensesMenu import ExpensesMenu
-from src.ui.menus.FileMenu import FileMenu
 from src.ui.SideBar import SideBar
 from src.ui.WelcomePage import WelcomePage
-from src.ui.menus.IncomeMenu import IncomeMenu
 from src.ui.menus.MainMenuBar import MainMenuBar
 
 

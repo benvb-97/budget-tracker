@@ -12,7 +12,8 @@ from src.data.TaggedItems import TaggedItems, TaggedItem
 from src.data.TransactionCategories import TransactionCategory
 
 
-class AbstractTransaction(TaggedItem):
+class Transaction(TaggedItem):
+
     def __init__(self,
                  project: "Project",
                  identifier: int,
@@ -61,15 +62,13 @@ class AbstractTransaction(TaggedItem):
         }
 
 
-class IncomeTransaction(AbstractTransaction):
-
     @classmethod
     def init_from_json(
         cls,
         identifier: int,
         json_dict: dict[str, Any],
         project: "Project",
-    ) -> "IncomeTransaction":
+    ) -> "Transaction":
 
         return cls(
             project=project,
@@ -78,39 +77,12 @@ class IncomeTransaction(AbstractTransaction):
             counterpart=project.counterparts[json_dict["counterpart"]] if json_dict["counterpart"] is not None else None,
             amount=Decimal(json_dict["amount"]),
             account=project.bank_accounts[json_dict["account"]] if json_dict["account"] is not None else None,
-            category=project.income_categories[json_dict["category"]] if json_dict["category"] is not None else None,
+            category=project.transaction_categories[json_dict["category"]] if json_dict["category"] is not None else None,
             note=json_dict["note"],
         )
 
 
-class ExpenseTransaction(AbstractTransaction):
-
-    @classmethod
-    def init_from_json(
-            cls,
-            identifier: int,
-            json_dict: dict[str, Any],
-            project: "Project",
-    ) -> "ExpenseTransaction":
-
-        return cls(
-            project=project,
-            identifier=identifier,
-            date=datetime.date.fromisoformat(json_dict["date"]),
-            counterpart=None,
-            amount=Decimal(json_dict["amount"]),
-            account=project.bank_accounts[json_dict["account"]],
-            category=project.expense_categories[json_dict["category"]],
-            note=json_dict["note"],
-        )
-
-
-class IncomeTransactions(TaggedItems[IncomeTransaction]):
+class Transactions(TaggedItems[Transaction]):
     pass
 
 
-class ExpenseTransactions(TaggedItems[ExpenseTransaction]):
-    pass
-
-
-Transactions: TypeAlias = IncomeTransactions | ExpenseTransactions
