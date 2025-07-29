@@ -61,7 +61,7 @@ class CategoriesDialog(QDialog):
         self._setup_connections()
 
     def _setup_ui(self) -> None:
-        self.setWindowTitle("Manage Income Categories")
+        self.setWindowTitle("Manage Transaction Categories")
         self._layout = QVBoxLayout(self)
 
         # List view
