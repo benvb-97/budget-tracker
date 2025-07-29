@@ -7,6 +7,7 @@ import os
 from src.data.settings.AppSettings import AppSettings
 from src.models.BankAccounts import BankAccountsOverviewListModel
 from src.models.CounterParts import CounterPartsOverviewListModel
+from src.models.TransactionCSVReaders import TransactionCSVReadersOverviewModel
 from src.models.TransactionCategories import TransactionCategoriesOverviewModel
 from src.models.Transactions import TransactionsOverviewTableModel
 
@@ -43,6 +44,10 @@ class ProjectsModel(QAbstractListModel):
                                                                 settings=self._settings,
                                                                 parent=self,
                                                                 )
+        self.transaction_csv_readers_model = TransactionCSVReadersOverviewModel(projects_model=self,
+                                                                                settings=self._settings,
+                                                                                parent=self,
+                                                                                )
 
         self.transaction_categories_model = TransactionCategoriesOverviewModel(projects_model=self,
                                                                                settings=self._settings,

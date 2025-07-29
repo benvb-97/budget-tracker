@@ -23,6 +23,7 @@ from src.ui.ManageBankAccounts import ManageBankAccountsDialog
 from src.ui.ManageCounterParts import ManageCounterPartsDialog
 from src.ui.delegates.DateDelegate import DateDelegate
 from src.ui.transactions.ManageCategories import CategoriesDialog
+from src.ui.transactions.ManageTransactionCSVReaders import ReadersDialog
 
 if TYPE_CHECKING:
     from src.ui.MainWindow import MainWindow
@@ -65,6 +66,11 @@ class EditTransactionsToolBar(QToolBar):
         manage_accounts_action.triggered.connect(self._open_manage_bank_accounts_dialog)
         self.addAction(manage_accounts_action)
 
+        # Manage Readers Action
+        manage_readers_action = QAction("Manage .csv Readers", self)
+        manage_readers_action.triggered.connect(self._open_manage_readers_dialog)
+        self.addAction(manage_readers_action)
+
     def set_transactions_model(self, transactions_model: TransactionsOverviewTableModel) -> None:
         self._transactions_model = transactions_model
 
@@ -89,6 +95,11 @@ class EditTransactionsToolBar(QToolBar):
                                           settings=self._settings,
                                           parent=self)
 
+        self._center_dialog(dialog)
+        dialog.exec()
+
+    def _open_manage_readers_dialog(self) -> None:
+        dialog = ReadersDialog(projects_model=self._projects_model, settings=self._settings, parent=self)
         self._center_dialog(dialog)
         dialog.exec()
 

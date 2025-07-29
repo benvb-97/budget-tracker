@@ -9,6 +9,7 @@ from src.data.BankAccount import BankAccounts, BankAccount
 from src.data.CounterParts import CounterPart, CounterParts
 from src.data.TransactionCategories import TransactionCategories, TransactionCategory
 from src.data.Transactions import Transactions, Transaction
+from src.data.TransactionsCSVReader import TransactionCSVReaders, TransactionsCSVReader
 from src.data.settings.AppSettings import AppSettings
 
 
@@ -35,11 +36,13 @@ class Project(QObject):
         self.transaction_categories = TransactionCategories(project=self, settings=self.settings, factory=TransactionCategory)
         self.bank_accounts = BankAccounts(project=self, settings=self.settings, factory=BankAccount)
         self.counterparts = CounterParts(project=self, settings=self.settings, factory=CounterPart)
+        self.transaction_csv_readers = TransactionCSVReaders(project=self, settings=self.settings, factory=TransactionsCSVReader)
 
         self._data_map = {
             "transaction_categories": self.transaction_categories,
             "bank_accounts": self.bank_accounts,
             "counterparts": self.counterparts,
+            "transaction_csv_readers": self.transaction_csv_readers,
             # Put transactions AFTER categories/bank accounts/counterparts.
             # Loading a project JSON requires these to be instantiated before instantiating transactions.
             "transactions": self.transactions,
