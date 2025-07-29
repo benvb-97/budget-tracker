@@ -16,7 +16,6 @@ class ComboBoxDelegate(QStyledItemDelegate):
 
     def __init__(self, parent):
         super().__init__(parent)
-        # self._editors = {}
 
     def paint(self, painter, option, index):
         if isinstance(self.parent(), QAbstractItemView):
@@ -41,14 +40,14 @@ class ComboBoxDelegate(QStyledItemDelegate):
         model = index.model()
         if isinstance(model, QSortFilterProxyModel):
             model = model.sourceModel()
-        choices = model.data(index, role=model.comboBoxDataRole)  # type: dict[str, str]
+        choices = model.data(index, role=model.comboBoxOptionsRole)  # type: dict[str, str]
 
         for userData, text in choices.items():
             editor.addItem(text, userData)
         editor.blockSignals(False)
 
-        value = index.data(Qt.ItemDataRole.DisplayRole)
-        num = editor.findData(value)
+        value = index.data(Qt.ItemDataRole.EditRole)  # Get value from source model
+        num = editor.findData(value, role=Qt.ItemDataRole.UserRole)  # Find index of value in comboBox
         editor.setCurrentIndex(num)
 
     def setModelData(self, editor: QComboBox, model, index):

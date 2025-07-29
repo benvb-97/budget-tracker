@@ -36,3 +36,13 @@ application_styles = {
 currencies = {
     currency: currency for currency in Currencies
 }
+
+
+class DateFormats(StrEnum):
+    YYYY_MM_DD = "yyyy-MM-dd"
+    YYYY_DD_MM = "MM-dd-yyyy"
+
+
+date_formats = {
+    date_format: date_format for date_format in DateFormats
+}

@@ -9,10 +9,10 @@ from src.models.TaggedItems import TaggedItemsOverviewTableModel, TaggedItemsLis
 
 if TYPE_CHECKING:
     from src.data.Projects import Project
-from src.data.Transactions import Transactions, Transaction
+    from src.models.Projects import ProjectsModel
+from src.data.Transactions import Transactions, IncomeTransaction
 from PySide6.QtCore import QAbstractListModel, Qt, QModelIndex
 from enum import IntEnum
-from src.models.Projects import ProjectsModel
 
 class Columns(IntEnum):
     NAME = 0

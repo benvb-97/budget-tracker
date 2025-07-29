@@ -149,6 +149,9 @@ class TaggedItems(Generic[TaggedItemType]):
         self._data[identifier] = new_item
         return new_item
 
+    def delete_item(self, item: TaggedItemType):
+        _ = self._data.pop(item.identifier)
+
     def load_from_json(self, json_dict: dict[int, dict[str, Any]]) -> None:
         for identifier, item_dict in json_dict.items():
             self.create_new_item(

@@ -105,7 +105,7 @@ class ManageBankAccountsDialog(QDialog):
         self._splitter.addWidget(account_widget)
 
     def _set_models(self) -> None:
-        self._accounts_model = BankAccountsOverviewListModel(projects_model=self._projects_model, settings=self._settings, parent=self)
+        self._accounts_model = self._projects_model.bank_accounts_model
         self._account_model = BankAccountDataModel(accounts_model=self._accounts_model, settings=self._settings, parent=self)
 
         self._account_selection_model = QItemSelectionModel(self._accounts_model)

@@ -41,7 +41,7 @@ class MainBackend(QObject):
         :return:
         """
         self.projects = Projects(settings=self._settings)
-        self._projects_model = ProjectsModel(projects=self.projects)
+        self._projects_model = ProjectsModel(projects=self.projects, settings=self._settings, parent=self)
 
 
 def main() -> None:

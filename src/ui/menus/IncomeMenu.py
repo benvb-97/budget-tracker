@@ -27,7 +27,10 @@ class IncomeMenu(QMenu):
         self.addAction(edit_transactions_action)
 
     def _navigate_to_edit_transactions_page(self) -> None:
-        tool_bar = EditTransactionsToolBar(projects_model=self._projects_model, settings=self._settings, parent=self._main_window)
+        tool_bar = EditTransactionsToolBar(projects_model=self._projects_model,
+                                           settings=self._settings,
+                                           parent=self._main_window,
+                                           )
         self._main_window.set_current_tool_bar(tool_bar)
 
         edit_transactions_page = EditTransactionsPage(projects_model=self._projects_model,

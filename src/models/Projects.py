@@ -4,6 +4,12 @@ from PySide6.QtCore import QAbstractListModel, QItemSelection, QModelIndex, Qt, 
 from PySide6.QtGui import QFont
 import os
 
+from src.data.settings.AppSettings import AppSettings
+from src.models.BankAccounts import BankAccountsOverviewListModel
+from src.models.CounterParts import CounterPartsOverviewListModel
+from src.models.TransactionCategories import IncomeCategoriesOverviewModel
+from src.models.Transactions import IncomeTransactionsOverviewTableModel
+
 if TYPE_CHECKING:
     from src.data.Projects import Project, Projects
 
@@ -13,8 +19,10 @@ class ProjectsModel(QAbstractListModel):
 
     current_project_changed = Signal(object)
 
-    def __init__(self, projects: "Projects"):
-        super().__init__(parent=None)
+    def __init__(self, projects: "Projects", settings: AppSettings, parent):
+        super().__init__(parent)
+
+        self._settings = settings
 
         # Data
         self._projects = projects
@@ -24,6 +32,26 @@ class ProjectsModel(QAbstractListModel):
             self._row_to_id_mapper[row] = project.identifier
 
         self._current_row = 0 if self._projects else -1  # type: int
+
+        self._create_models()
+
+    def _create_models(self):
+        self.bank_accounts_model = BankAccountsOverviewListModel(projects_model=self,
+                                                                 settings=self._settings,
+                                                                 parent=self)
+        self.counterparts_model = CounterPartsOverviewListModel(projects_model=self,
+                                                                settings=self._settings,
+                                                                parent=self,
+                                                                )
+
+        self.income_categories_model = IncomeCategoriesOverviewModel(projects_model=self,
+                                                               settings=self._settings,
+                                                               parent=self,
+                                                               )
+        self.income_transactions_model = IncomeTransactionsOverviewTableModel(projects_model=self,
+                                                                  settings=self._settings,
+                                                                  parent=self,
+                                                                  )
 
     def rowCount(self, parent=QModelIndex()) -> int:
         return self._projects.n_projects

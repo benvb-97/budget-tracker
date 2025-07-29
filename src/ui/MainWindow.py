@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
 
         self._projects_model = projects_model
         self._settings = settings
-        self._tool_bar = None  # type: Optional[QToolBar]
+        self.tool_bar = None  # type: Optional[QToolBar]
         self._current_page = None  # type: Optional[QWidget]
 
         self._setup_ui()
@@ -49,16 +49,16 @@ class MainWindow(QMainWindow):
         self.setMenuBar(self._menu_bar)
 
     def _remove_current_tool_bar(self):
-        if self._tool_bar is not None:
-            self.removeToolBar(self._tool_bar)
-            self._tool_bar.setParent(None)
-            self._tool_bar = None
+        if self.tool_bar is not None:
+            self.removeToolBar(self.tool_bar)
+            self.tool_bar.setParent(None)
+            self.tool_bar = None
 
     def set_current_tool_bar(self, new_tool_bar: QToolBar = None) -> None:
         self._remove_current_tool_bar()
 
-        self._tool_bar = new_tool_bar
-        if self._tool_bar is not None:
+        self.tool_bar = new_tool_bar
+        if self.tool_bar is not None:
             self.addToolBar(new_tool_bar)
 
     def set_current_page(self, new_page: QWidget) -> None:

@@ -12,7 +12,7 @@ from src.data.settings.ComboBoxChoices import (
     ApplicationStyles,
     DebugLevels,
     application_styles,
-    debug_levels, currencies,
+    debug_levels, currencies, date_formats, DateFormats,
 )
 
 
@@ -67,6 +67,12 @@ class StyleSettings(SettingsSubGroup):
                 text="Currency",
                 choices=currencies,
                 default=Currencies.EUR,
+            ),
+            ComboBoxSetting(
+                key=GeneralSettingKeys.DATE_FORMAT,
+                text="Date Format",
+                choices=date_formats,
+                default=DateFormats.YYYY_MM_DD,
             )
         ]
         self._settings = {setting.key: setting for setting in settings}
@@ -76,3 +82,4 @@ class GeneralSettingKeys(StrEnum):
     DEBUG_LEVEL = "debug_level"
     APPLICATION_STYLE = "application_style"
     CURRENCY="currency"
+    DATE_FORMAT = "date_format"

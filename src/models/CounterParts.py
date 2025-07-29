@@ -14,11 +14,11 @@ if TYPE_CHECKING:
 from src.data.Transactions import Transactions, IncomeTransaction
 from PySide6.QtCore import QAbstractListModel, Qt, QModelIndex, QAbstractTableModel
 from enum import IntEnum
-from src.data.BankAccount import BankAccount
+from src.data.CounterParts import CounterPart
 from schwifty.iban import IBAN
 
 
-class BankAccountsOverviewListModel(TaggedItemsListModel):
+class CounterPartsOverviewListModel(TaggedItemsListModel):
 
     def __init__(self,
                  projects_model: "ProjectsModel",
@@ -31,18 +31,18 @@ class BankAccountsOverviewListModel(TaggedItemsListModel):
                          )
 
     def _get_project_data(self, project: "Project") -> TaggedItemsType:
-        return project.bank_accounts
+        return project.counterparts
 
     def data(self, index=QModelIndex(), role=Qt.ItemDataRole.DisplayRole) -> Any:
         if not index.isValid():
             return None
 
-        account = self.get_item(index)  # type: BankAccount
+        counterpart = self.get_item(index)  # type: CounterPart
 
         if role == Qt.ItemDataRole.DisplayRole:
-            return account.name
+            return counterpart.name
         elif role == Qt.ItemDataRole.EditRole:
-            return account.name
+            return counterpart.name
         return None
 
     def setData(
@@ -51,7 +51,7 @@ class BankAccountsOverviewListModel(TaggedItemsListModel):
         if not index.isValid():
             return False
 
-        item: BankAccount = self.get_item(index)
+        item: CounterPart = self.get_item(index)
 
         if role == Qt.ItemDataRole.EditRole:
             item.name = value
@@ -71,63 +71,63 @@ class BankAccountsOverviewListModel(TaggedItemsListModel):
         return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled
 
 
-class BankAccountDataRows(IntEnum):
+class CounterPartDataRows(IntEnum):
     IBAN = 0
     NOTE = 1
 
 
-class BankAccountDataModel(QAbstractTableModel):
+class CounterPartDataModel(QAbstractTableModel):
 
-    rows = BankAccountDataRows
+    rows = CounterPartDataRows
 
     def __init__(self,
-                 accounts_model: "BankAccountsOverviewListModel",
+                 counterparts_model: "CounterPartsOverviewListModel",
                  settings: AppSettings,
                  parent,
                  ) -> None:
         super().__init__(parent)
 
-        self._accounts_model = accounts_model
-        self._current_account = None  # type: Optional[BankAccount]  # Placeholder, to be initialized later during init
+        self._counterparts_model = counterparts_model
+        self._current_counterpart = None  # type: Optional[CounterPart]  # Placeholder, to be initialized later during init
         self._settings = settings
 
         self._setup_connections()
-        self._set_current_account()  # Initializes current account
+        self._set_current_counterpart()  # Initializes current counterpart
 
     def _setup_connections(self) -> None:
-        self._accounts_model.current_item_changed.connect(self._set_current_account)
+        self._counterparts_model.current_item_changed.connect(self._set_current_counterpart)
 
-    def _set_current_account(self):
+    def _set_current_counterpart(self):
         self.beginResetModel()
-        new_account: Optional[BankAccount] = self._accounts_model.current_item
-        self._current_account = new_account
+        new_counterpart: Optional[CounterPart] = self._counterparts_model.current_item
+        self._current_counterpart = new_counterpart
         self.endResetModel()
 
     def rowCount(self, /, parent = ...):
-        return len(self.rows) if self._current_account is not None else 0
+        return len(self.rows) if self._current_counterpart is not None else 0
 
     def columnCount(self, /, parent = ...):
         return 1
 
     def data(self, index=QModelIndex(), role=Qt.ItemDataRole.DisplayRole) -> Any:
-        if not index.isValid() or self._current_account is None:
+        if not index.isValid() or self._current_counterpart is None:
             return None
 
         row = index.row()
 
         if role == Qt.ItemDataRole.DisplayRole:
             if row == self.rows.IBAN:
-                return str(self._current_account.iban) if self._current_account.iban is not None else "Enter a valid IBAN here..."
+                return str(self._current_counterpart.iban) if self._current_counterpart.iban is not None else "Enter a valid IBAN here..."
             elif row == self.rows.NOTE:
-                return self._current_account.note
+                return self._current_counterpart.note
             else:
                 raise NotImplementedError(f"DisplayRole for row {row} is not implemented."
                                           f"Accepted row: {self.rows}")
         elif role == Qt.ItemDataRole.EditRole:
             if row == self.rows.IBAN:
-                return str(self._current_account.iban) if self._current_account.iban is not None else ""
+                return str(self._current_counterpart.iban) if self._current_counterpart.iban is not None else ""
             elif row == self.rows.NOTE:
-                return self._current_account.note
+                return self._current_counterpart.note
             else:
                 raise NotImplementedError(f"EditRole for row {row} is not implemented."
                                           f"Accepted row: {self.rows}")
@@ -137,7 +137,7 @@ class BankAccountDataModel(QAbstractTableModel):
     def setData(
         self, index=QModelIndex(), value=None, role=Qt.ItemDataRole.EditRole
     ) -> bool:
-        if not index.isValid() or self._current_account is None:
+        if not index.isValid() or self._current_counterpart is None:
             return False
 
         row = index.row()
@@ -150,18 +150,18 @@ class BankAccountDataModel(QAbstractTableModel):
                     logging.getLogger(__name__).warning(f"Passed an invalid IBAN: {value}")
                     return False
 
-                self._current_account.iban = new_iban
+                self._current_counterpart.iban = new_iban
                 self.dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
                 return True
             elif row == self.rows.NOTE:
-                self._current_account.note = value
+                self._current_counterpart.note = value
                 self.dataChanged.emit(index, index, Qt.ItemDataRole.DisplayRole)
                 return True
 
         return False
 
     def headerData(self, section, orientation, /, role = ...):
-        if self._current_account is None or section < 0 or orientation == Qt.Orientation.Horizontal:
+        if self._current_counterpart is None or section < 0 or orientation == Qt.Orientation.Horizontal:
             return None
 
         if role == Qt.ItemDataRole.DisplayRole:
@@ -171,9 +171,9 @@ class BankAccountDataModel(QAbstractTableModel):
                 return "Note"
         elif role == Qt.ItemDataRole.ToolTipRole:
             if section == self.rows.IBAN:
-                return "Enter a valid IBAN number here for your bank account"
+                return "Enter a valid IBAN number here for your counter part"
             elif section == self.rows.NOTE:
-                return "Optional, add a note to your bank account"
+                return "Optional, add a note to your counter part"
         return None
 
     def flags(self, index, /):
@@ -181,7 +181,7 @@ class BankAccountDataModel(QAbstractTableModel):
         Returns the item flags for the given index.
         Indicates that the item is selectable, editable, and enabled.
         """
-        if not index.isValid() or self._current_account is None:
+        if not index.isValid() or self._current_counterpart is None:
             return Qt.ItemFlag.NoItemFlags
 
         return Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable | Qt.ItemFlag.ItemIsEnabled

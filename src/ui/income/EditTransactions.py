@@ -1,3 +1,4 @@
+from threading import main_thread
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QModelIndex, Qt, Signal
@@ -19,11 +20,14 @@ from src.data.settings.AppSettings import AppSettings
 from src.models.Projects import ProjectsModel
 from src.models.Transactions import IncomeTransactionsOverviewTableModel
 from src.ui.ManageBankAccounts import ManageBankAccountsDialog
+from src.ui.ManageCounterParts import ManageCounterPartsDialog
+from src.ui.delegates.DateDelegate import DateDelegate
 from src.ui.income.ManageCategories import CategoriesDialog
 
 if TYPE_CHECKING:
     from src.ui.MainWindow import MainWindow
 from src.ui.delegates.ComboBoxDelegate import ComboBoxDelegate
+from typing import Optional
 
 
 class EditTransactionsToolBar(QToolBar):
@@ -35,6 +39,7 @@ class EditTransactionsToolBar(QToolBar):
 
         self._main_window = parent
         self._projects_model = projects_model
+        self._transactions_model = self._projects_model.income_transactions_model  # type: IncomeTransactionsOverviewTableModel
         self._settings = settings
 
         self.setMovable(True)
@@ -50,18 +55,32 @@ class EditTransactionsToolBar(QToolBar):
         manage_categories_action.triggered.connect(self._open_manage_categories_dialog)
         self.addAction(manage_categories_action)
 
+        # Manage Counterparts Action
+        manage_counterparts_action = QAction("Manage Counterparts", self)
+        manage_counterparts_action.triggered.connect(self._open_manage_counterparts_dialog)
+        self.addAction(manage_counterparts_action)
+
         # Manage Bank Accounts Action
         manage_accounts_action = QAction("Manage Accounts", self)
         manage_accounts_action.triggered.connect(self._open_manage_bank_accounts_dialog)
         self.addAction(manage_accounts_action)
 
-
+    def set_transactions_model(self, transactions_model: IncomeTransactionsOverviewTableModel) -> None:
+        self._transactions_model = transactions_model
 
     def _add_transaction(self) -> None:
-        pass
+        self._transactions_model.create_new_item()
 
     def _open_manage_categories_dialog(self) -> None:
         dialog = CategoriesDialog(projects_model=self._projects_model, settings=self._settings, parent=self)
+        self._center_dialog(dialog)
+        dialog.exec()
+
+    def _open_manage_counterparts_dialog(self) -> None:
+        dialog = ManageCounterPartsDialog(projects_model=self._projects_model,
+                                          settings=self._settings,
+                                          parent=self)
+
         self._center_dialog(dialog)
         dialog.exec()
 
@@ -106,12 +125,13 @@ class TransactionsTableView(QTableView):
 
 class EditTransactionsPage(QWidget):
     def __init__(
-        self, projects_model: "ProjectsModel", settings: "AppSettings", parent=None
+        self, projects_model: "ProjectsModel", settings: "AppSettings", parent:"MainWindow",
     ):
         super(EditTransactionsPage, self).__init__(parent=parent)
 
         self._projects_model = projects_model
         self._settings = settings
+        self._main_window = parent
 
         self._setup_ui()
         self._set_models()
@@ -124,6 +144,7 @@ class EditTransactionsPage(QWidget):
         self._view.setAlternatingRowColors(True)
         self._view.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
 
+        self._view.setItemDelegateForColumn(IncomeTransactionsOverviewTableModel.cols.DATE, DateDelegate(settings=self._settings, parent=self._view))
         for column in IncomeTransactionsOverviewTableModel.comboBox_columns:
             self._view.setItemDelegateForColumn(column, ComboBoxDelegate(self._view))
 
@@ -135,10 +156,7 @@ class EditTransactionsPage(QWidget):
         self._layout.addWidget(self._view)
 
     def _set_models(self) -> None:
-        transactions_model = IncomeTransactionsOverviewTableModel(projects_model=self._projects_model,
-                                                                  settings=self._settings,
-                                                                  parent=self,
-                                                                  )
+        transactions_model = self._projects_model.income_transactions_model
 
         self._view.setModel(transactions_model)
         self._header_view.setModel(transactions_model)

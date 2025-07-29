@@ -89,10 +89,7 @@ class CategoriesDialog(QDialog):
 
 
     def _set_models(self) -> None:
-        self._categories_model = IncomeCategoriesOverviewModel(projects_model=self._projects_model,
-                                                           settings=self._settings,
-                                                           parent=self,
-                                                           )
+        self._categories_model = self._projects_model.income_categories_model
 
         self._categories_list_selection_model = QItemSelectionModel(self._categories_model)
 
